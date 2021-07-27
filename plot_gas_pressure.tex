@@ -1,0 +1,37 @@
+\documentclass{standalone}
+
+%\providecommand{\datapath}{.}
+
+\usepackage{tikz}
+\usepackage{pgfplotstable}
+\usepackage{siunitx}
+\pgfplotsset{compat=1.13}
+\usetikzlibrary{plotmarks,calc,math,shapes}
+
+\begin{document}
+\begin{tikzpicture}
+  \begin{axis}[
+    xlabel={\large t(\si{\second})},
+    ylabel={\large p(\si{bar})},
+     ymin=20,
+     ymax=40,
+    table/col sep=comma,
+    legend pos=north east,legend cell align=left]
+
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_pressure.csv}\data
+    
+    \addplot[color=red,solid,line width=1pt] table[x index =0,y index =1] {\data};
+    
+    % \addplot[color=blue,solid,line width=1pt] table[x index =0,y=lowerbound] {\data};
+    % \addplot[color=blue,solid,line width=1pt] table[x index =0,y=upperbound] {\data};
+
+    
+    
+    \addlegendentry{\tiny Pressure}
+    % \addlegendentry{\tiny Deterministic pressure}
+    
+  \end{axis}
+\end{tikzpicture}
+\end{document}
+
+

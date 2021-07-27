@@ -1,0 +1,50 @@
+\documentclass{standalone}
+
+%\providecommand{\datapath}{.}
+
+\usepackage{tikz}
+\usepackage{pgfplotstable}
+\usepackage{siunitx}
+\pgfplotsset{compat=1.13}
+\usetikzlibrary{plotmarks,calc,math,shapes}
+
+\begin{document}
+\begin{tikzpicture}
+  \begin{axis}[
+    xlabel={\large t(\si{\hour})},
+    ylabel={\large q(\si{\meter \cubed \per \second})},
+    table/col sep=comma,
+    legend pos=north east,legend cell align=left]
+
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_mean.csv}\mean
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_sigma.csv}\sigma
+
+    \pgfplotstablegetrowsof{\mean}
+    \pgfplotstablenew[] {\pgfplotsretval}{\newtable}
+
+    \pgfplotstablecreatecol[copy column from table={\mean}{[index] 1}] {mean} {\newtable}
+    \pgfplotstablecreatecol[copy column from table={\sigma}{[index] 1}] {sigma} {\newtable}
+    \pgfplotstablecreatecol[expr={\thisrowno{1}-\thisrowno{2}}]{lowerbound}{\newtable}
+    \pgfplotstablecreatecol[expr={\thisrowno{1}+\thisrowno{2}}]{upperbound}{\newtable}
+
+    \pgfplotstablecreatecol[copy column from table={\mean}{[index] 0}] {time} {\newtable}
+    \pgfplotstablecreatecol[expr={\thisrowno{5}/3600.0}]{time_h}{\newtable}
+    
+    \addplot[color=cyan,solid,line width=1pt] table[x index =6,y index = 1] {\newtable};
+    \addplot[color=blue,solid,line width=1pt] table[x index =6,y index = 3] {\newtable};
+    \addplot[color=blue,solid,line width=1pt] table[x index =6,y index = 4] {\newtable};
+    % \addplot[color=red,solid,line width=1pt] table[x index =0,y index =1] {\deterministic};
+    
+    % \addplot[color=blue,solid,line width=1pt] table[x index =0,y=lowerbound] {\data};
+    % \addplot[color=blue,solid,line width=1pt] table[x index =0,y=upperbound] {\data};
+
+    
+    
+    \addlegendentry{\tiny Mean flow}
+    % \addlegendentry{\tiny Deterministic pressure}
+    
+  \end{axis}
+\end{tikzpicture}
+\end{document}
+
+
