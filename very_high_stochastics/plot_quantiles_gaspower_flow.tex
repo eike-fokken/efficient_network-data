@@ -1,0 +1,49 @@
+\documentclass{standalone}
+
+%\providecommand{\datapath}{.}
+
+\usepackage{tikz}
+\usepackage{pgfplotstable}
+\usepackage{siunitx}
+\pgfplotsset{compat=1.13}
+\usetikzlibrary{plotmarks,calc,math,shapes}
+
+\begin{document}
+\begin{tikzpicture}
+  \begin{axis}[
+    width=\textwidth,
+    height=0.5\textwidth,
+    xlabel={\large t(\si{\hour})},
+    ylabel={\large flow(\si{\meter \cubed \per \second})},
+    x filter/.code={\pgfmathparse{#1/3600}\pgfmathresult},
+    ymin=18,
+    ymax=30,
+    table/col sep=comma,
+    legend pos=north west,legend cell align=left]
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_q_three_high.csv}\threehigh
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_q_two_high.csv}\twohigh
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_q_one_high.csv}\onehigh
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_median.csv}\median
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_q_one_low.csv}\onelow
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_q_two_low.csv}\twolow
+    \pgfplotstableread[skip first n = 1 ]{./p_br71_flow_q_three_low.csv}\threelow
+
+    \addplot[color=green,solid,line width=1pt] table[x index =0,y index = 1] {\threehigh};
+    \addplot[color=red,solid,line width=1pt] table[x index =0,y index = 1] {\twohigh};
+    \addplot[color=blue,solid,line width=1pt] table[x index =0,y index = 1] {\onehigh};
+    \addplot[color=cyan,solid,line width=1pt] table[x index =0,y index = 1] {\median};
+    \addplot[color=blue,solid,line width=1pt] table[x index =0,y index = 1] {\onelow};
+    \addplot[color=red,solid,line width=1pt] table[x index =0,y index = 1] {\twolow};
+    \addplot[color=green,solid,line width=1pt] table[x index =0,y index = 1] {\threelow};
+    
+    \addlegendentry{\tiny \(\SI{90}{\percent}\) quantile}
+    \addlegendentry{\tiny \(\SI{75}{\percent}\) quantile}
+    \addlegendentry{\tiny \(\SI{50}{\percent}\) quantile}
+    \addlegendentry{\tiny median}
+    % \addlegendentry{\tiny Deterministic flow}
+    
+  \end{axis}
+\end{tikzpicture}
+\end{document}
+
+
